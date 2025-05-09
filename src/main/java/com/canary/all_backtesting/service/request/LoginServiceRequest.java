@@ -9,5 +9,6 @@ public class LoginServiceRequest {
 
     private String username;
     private String password;
+    private Long nowMs;
 
 }

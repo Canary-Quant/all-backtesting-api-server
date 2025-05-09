@@ -7,6 +7,9 @@ import com.canary.all_backtesting.service.request.CreateUserServiceRequest;
 import com.canary.all_backtesting.service.request.LoginServiceRequest;
 import com.canary.all_backtesting.service.user.exception.UserServiceException;
 import com.canary.all_backtesting.util.BcryptUtil;
+import com.canary.all_backtesting.util.jwt.CreateJwtRequest;
+import com.canary.all_backtesting.util.jwt.JwtTokenResponse;
+import com.canary.all_backtesting.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import static com.canary.all_backtesting.service.user.exception.UserServiceError
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public void join(CreateUserServiceRequest request) {
@@ -42,7 +46,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void login(LoginServiceRequest request) {
+    public JwtTokenResponse login(LoginServiceRequest request) {
 
         String username = request.getUsername();
 
@@ -56,6 +60,6 @@ public class UserService {
             throw new UserServiceException(INVALID_PASSWORD);
         }
 
-
+        return jwtUtil.createJwtToken(new CreateJwtRequest(username, Role.BASIC, request.getNowMs()));
     }
 }

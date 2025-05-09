@@ -3,7 +3,9 @@ package com.canary.all_backtesting.service.user;
 import com.canary.all_backtesting.domain.user.User;
 import com.canary.all_backtesting.repository.user.UserRepository;
 import com.canary.all_backtesting.service.request.CreateUserServiceRequest;
+import com.canary.all_backtesting.service.request.LoginServiceRequest;
 import com.canary.all_backtesting.service.user.exception.UserServiceException;
+import com.canary.all_backtesting.util.jwt.JwtTokenResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +70,46 @@ class UserServiceTest {
 
     }
 
+    @DisplayName("로그인 성공시 jwt token 이 발급된다.")
+    @Test
+    void login() {
+        //given
+        long issuedMs = System.currentTimeMillis();
+        userService.join(new CreateUserServiceRequest("test", "test"));
 
+        // when
+        JwtTokenResponse response = userService.login(new LoginServiceRequest("test", "test", issuedMs));
+
+        //then
+        assertThat(response.getAccessToken()).isNotNull();
+        assertThat(response.getAccessToken()).isNotBlank();
+        assertThat(response.getExpiredSec()).isNotEqualTo(0);
+    }
+
+    @DisplayName("없는 아이디로 조회시 예외가 발생한다.")
+    @Test
+    void loginWithInvalidUsername() {
+        //given
+        long issuedMs = System.currentTimeMillis();
+        userService.join(new CreateUserServiceRequest("test", "test"));
+
+        //when then
+        assertThatThrownBy(() -> userService.login(new LoginServiceRequest("test!", "test", issuedMs)))
+                .isInstanceOf(UserServiceException.class)
+                .hasMessage("해당 사용자를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("올바르지 않은 비밀번호 입력시 예외가 발생한다.")
+    @Test
+    void loginWithInvalidPassword() {
+
+        //given
+        long issuedMs = System.currentTimeMillis();
+        userService.join(new CreateUserServiceRequest("test", "test"));
+
+        //when then
+        assertThatThrownBy(() -> userService.login(new LoginServiceRequest("test", "test!", issuedMs)))
+                .isInstanceOf(UserServiceException.class)
+                .hasMessage("비밀번호가 일치하지 않습니다.");
+    }
 }
