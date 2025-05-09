@@ -32,6 +32,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// https://mvnrepository.com/artifact/org.mindrot.bcrypt/bcrypt
+	implementation group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
+
 }
 
 tasks.named('test') {
