@@ -2,8 +2,8 @@ package com.canary.all_backtesting.service.user;
 
 import com.canary.all_backtesting.domain.user.User;
 import com.canary.all_backtesting.repository.user.UserRepository;
-import com.canary.all_backtesting.service.request.CreateUserServiceRequest;
-import com.canary.all_backtesting.service.request.LoginServiceRequest;
+import com.canary.all_backtesting.service.user.request.CreateUserServiceRequest;
+import com.canary.all_backtesting.service.user.request.LoginServiceRequest;
 import com.canary.all_backtesting.service.user.exception.UserServiceException;
 import com.canary.all_backtesting.util.jwt.JwtTokenResponse;
 import org.junit.jupiter.api.DisplayName;
