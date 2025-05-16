@@ -1,5 +1,6 @@
 package com.canary.all_backtesting.domain.user;
 
+import com.canary.all_backtesting.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,22 +29,10 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @Builder
     private User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
-        registerInitializeDateTime();
-    }
-
-    private void registerInitializeDateTime() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
     }
 }

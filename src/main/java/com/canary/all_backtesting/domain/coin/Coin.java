@@ -1,17 +1,16 @@
 package com.canary.all_backtesting.domain.coin;
 
+import com.canary.all_backtesting.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coin {
+public class Coin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,19 +26,10 @@ public class Coin {
     @Column(nullable = false)
     private String englishName;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @Builder
-    private Coin(String market, String koreanName, String englishName, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Coin(String market, String koreanName, String englishName) {
         this.market = market;
         this.koreanName = koreanName;
         this.englishName = englishName;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 }
