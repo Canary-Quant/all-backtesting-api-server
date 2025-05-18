@@ -16,6 +16,6 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler(UserServiceException.class)
     public ApiResponse<String> handleUserServiceException(UserServiceException e) {
-        return ApiResponse.unAuthorized(e.getMessage());
+        return ApiResponse.of(e.getStatusCode(), e.getStatusCodeValue(), e.getMessage());
     }
 }

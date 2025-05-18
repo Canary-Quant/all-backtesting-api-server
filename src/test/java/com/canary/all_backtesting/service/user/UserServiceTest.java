@@ -6,13 +6,19 @@ import com.canary.all_backtesting.service.user.request.CreateUserServiceRequest;
 import com.canary.all_backtesting.service.user.request.LoginServiceRequest;
 import com.canary.all_backtesting.service.user.exception.UserServiceException;
 import com.canary.all_backtesting.util.jwt.JwtTokenResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,6 +26,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 class UserServiceTest {
+
+    @AfterEach
+    void cleansing() {
+        userRepository.deleteAll();
+    }
 
     @Autowired
     UserRepository userRepository;
@@ -52,6 +63,49 @@ class UserServiceTest {
 
         assertThatThrownBy(() -> userService.join(new CreateUserServiceRequest("test", "test2")))
                 .isInstanceOf(UserServiceException.class);
+    }
+
+    @DisplayName("동시에 같은 username 을 사용해 회원 가입 요청이 들어올 경우 한 사람만 성공 가능하다.")
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void joinAtTheSameTimeWithSameUsername() throws InterruptedException {
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+        int threadCount = 2;
+        CreateUserServiceRequest request = new CreateUserServiceRequest("same", "pass");
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        ExecutorService es = Executors.newFixedThreadPool(2);
+
+        es.execute(() -> {
+            try {
+                userService.join(request);
+                successCount.incrementAndGet();
+            } catch (Exception e) {
+                failCount.incrementAndGet();
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        es.execute(() -> {
+            try {
+                userService.join(request);
+                successCount.incrementAndGet();
+            } catch (Exception e) {
+                failCount.incrementAndGet();
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        latch.await();
+
+        System.out.println("success count = " + successCount.get());
+        System.out.println("fail count = " + failCount.get());
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(1);
     }
 
     @DisplayName("password 가 동일해도 다른 값이 저장된다.")

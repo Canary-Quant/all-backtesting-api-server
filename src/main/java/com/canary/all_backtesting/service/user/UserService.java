@@ -32,6 +32,7 @@ public class UserService {
         String password = request.getPassword();
 
         if (userRepository.findByUsername(username).isPresent()) {
+            log.error("userService.join: 회원 아이디 중복");
             throw new UserServiceException(DUPLICATED_USERNAME);
         }
 

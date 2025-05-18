@@ -1,7 +1,9 @@
 package com.canary.all_backtesting.service.user.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class UserServiceException extends RuntimeException {
 
     private final UserServiceErrorCode code;
@@ -13,5 +15,9 @@ public class UserServiceException extends RuntimeException {
 
     public HttpStatus getStatusCode() {
         return code.getStatus();
+    }
+
+    public int getStatusCodeValue() {
+        return code.getStatus().value();
     }
 }

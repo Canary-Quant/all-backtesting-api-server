@@ -57,9 +57,6 @@ class LoginControllerTest {
     void emptyUsername() throws Exception{
         LoginRequest request = new LoginRequest("", "password");
 
-        Mockito.when(userService.login(Mockito.any(LoginServiceRequest.class)))
-                .thenReturn(new JwtTokenResponse("acesstoken", 1000L));
-
         mockMvc.perform(
                         post("/login")
                                 .content(objectMapper.writeValueAsBytes(request))
@@ -75,9 +72,6 @@ class LoginControllerTest {
     @Test
     void nullUsername() throws Exception{
         LoginRequest request = new LoginRequest(null, "password");
-
-        Mockito.when(userService.login(Mockito.any(LoginServiceRequest.class)))
-                .thenReturn(new JwtTokenResponse("acesstoken", 1000L));
 
         mockMvc.perform(
                         post("/login")
@@ -95,9 +89,6 @@ class LoginControllerTest {
     void nullPassword() throws Exception{
         LoginRequest request = new LoginRequest("username", null);
 
-        Mockito.when(userService.login(Mockito.any(LoginServiceRequest.class)))
-                .thenReturn(new JwtTokenResponse("acesstoken", 1000L));
-
         mockMvc.perform(
                         post("/login")
                                 .content(objectMapper.writeValueAsBytes(request))
@@ -113,9 +104,6 @@ class LoginControllerTest {
     @Test
     void emptyPassword() throws Exception{
         LoginRequest request = new LoginRequest("username", "");
-
-        Mockito.when(userService.login(Mockito.any(LoginServiceRequest.class)))
-                .thenReturn(new JwtTokenResponse("acesstoken", 1000L));
 
         mockMvc.perform(
                         post("/login")
