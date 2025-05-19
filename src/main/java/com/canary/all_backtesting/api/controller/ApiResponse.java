@@ -30,4 +30,8 @@ public class ApiResponse<T> {
         return ApiResponse.of(OK, OK.value(), data);
     }
 
+    public static <T> ApiResponse<T> ok() {
+        return ApiResponse.of(OK, OK.value(), null);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.canary.all_backtesting.api.controller;
 
+import com.canary.all_backtesting.service.upbit.exception.UpBitServiceException;
 import com.canary.all_backtesting.service.user.exception.UserServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,5 +18,10 @@ public class ApiControllerAdvice {
     @ExceptionHandler(UserServiceException.class)
     public ApiResponse<String> handleUserServiceException(UserServiceException e) {
         return ApiResponse.of(e.getStatusCode(), e.getStatusCodeValue(), e.getMessage());
+    }
+
+    @ExceptionHandler(UpBitServiceException.class)
+    public ApiResponse<String> handleUpBitServiceException(UpBitServiceException e) {
+        return ApiResponse.of(e.getHttpStatus(), e.getHttpStatusValue(), e.getMessage());
     }
 }
