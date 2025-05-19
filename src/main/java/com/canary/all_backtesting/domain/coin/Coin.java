@@ -17,7 +17,7 @@ public class Coin extends BaseEntity {
     @Column(name = "coin_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String market;
 
     @Column(nullable = false)
@@ -26,10 +26,21 @@ public class Coin extends BaseEntity {
     @Column(nullable = false)
     private String englishName;
 
+    @Column(nullable = false)
+    private boolean supported;
+
     @Builder
     private Coin(String market, String koreanName, String englishName) {
         this.market = market;
         this.koreanName = koreanName;
         this.englishName = englishName;
+    }
+
+    public void support() {
+        supported = true;
+    }
+
+    public void terminateSupport() {
+        supported = false;
     }
 }

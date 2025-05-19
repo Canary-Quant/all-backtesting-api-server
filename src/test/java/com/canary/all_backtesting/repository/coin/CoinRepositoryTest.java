@@ -23,7 +23,7 @@ class CoinRepositoryTest {
     @Autowired
     EntityManager em;
 
-    @DisplayName("지원하는 코인을 등록할 수 있다.")
+    @DisplayName("upbit 에서 지원하는 코인을 등록할 수 있다.")
     @Test
     void save() {
 
@@ -44,14 +44,14 @@ class CoinRepositoryTest {
 
     }
 
-    @DisplayName("지원하는 코인을 삭제할 수 있다.")
+    @DisplayName("upbit 에서 지원하는 코인을 삭제할 수 있다.")
     @Test
     void delete() {
 
         //given
-        Coin btc = createCoin("test", "btc-kor", "btc");
-        Coin eth = createCoin("test", "eth-kor", "eth");
-        Coin xrp = createCoin("test", "xrp-kor", "xrp");
+        Coin btc = createCoin("test1", "btc-kor", "btc");
+        Coin eth = createCoin("test2", "eth-kor", "eth");
+        Coin xrp = createCoin("test3", "xrp-kor", "xrp");
 
         coinRepository.saveAll(List.of(btc, eth, xrp));
         coinRepository.deleteById(eth.getId());
@@ -65,6 +65,24 @@ class CoinRepositoryTest {
         assertThat(coins.get(0).getId()).isEqualTo(btc.getId());
     }
 
+    @DisplayName("all backtesting 에서 지원하는 코인을 모두 반환할 수 있다.")
+    @Test
+    void findBySupported() {
+        Coin btc = createCoin("test1", "btc-kor", "btc");
+        Coin eth = createCoin("test2", "eth-kor", "eth");
+        Coin xrp = createCoin("test3", "xrp-kor", "xrp");
+
+        btc.support();
+        xrp.support();
+
+        coinRepository.saveAll(List.of(btc, eth, xrp));
+
+//        em.clear();
+
+        List<Coin> supportedCoins = coinRepository.findAllBySupported();
+
+        assertThat(supportedCoins).hasSize(2);
+    }
 
 
     private Coin createCoin(String market, String koreanName, String englishName) {
